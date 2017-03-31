@@ -12,6 +12,8 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
+    ProgressBar pb;
+    WebView wv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,17 +44,21 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 // ZXing回傳的內容
                 String contents = intent.getStringExtra("SCAN_RESULT");
+                //放在TextView 顯示
                 //TextView textView1 = (TextView) findViewById(R.id.textView1);
                 //textView1.setText(contents.toString());
-                final ProgressBar pb;
-                WebView wv;
+
                 wv = (WebView)findViewById(R.id.wv);
                 pb = (ProgressBar)findViewById(R.id.pb);
+                //啟用javaScript
                 wv.getSettings().getJavaScriptEnabled();
+                //啟用縮放功能
                 wv.getSettings().setBuiltInZoomControls(true);
+                //顯示縮放小工具
                 wv.invokeZoomPicker();
+                //建立及使用 WebViewClient
                 wv.setWebViewClient(new WebViewClient());
-
+                //呼叫ProgressBar的setProgress()設定顯示進度,並依照進度值決定ProgressBar是要顯示或消失
                 wv.setWebChromeClient(new WebChromeClient() {
                                           public void onProgressChanged(WebView view, int progress) {
                                               pb.setProgress(progress);
@@ -67,5 +73,17 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+    //攔截返回建的動作
+    @Override
+    public void onBackPressed() {
+        //如果WebView有上一頁
+        if(wv.canGoBack()){
+            //回上一頁
+            wv.goBack();
+            return;
+        }
+        super.onBackPressed();
+    }
+
 
 }
